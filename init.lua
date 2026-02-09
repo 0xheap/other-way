@@ -109,6 +109,42 @@ require("lazy").setup({
     config = function()
       require("nvim-web-devicons").setup({ default = true })
     end
+  },
+  {
+    "neovim/nvim-lspconfig",
+    config = function()
+      vim.lsp.config.pyright = {
+        cmd = { 'pyright-langserver', '--stdio' },
+        filetypes = { 'python' },
+        root_markers = { 'pyproject.toml', 'setup.py', '.git' },
+      }
+      
+      vim.lsp.enable('pyright')
+      
+      vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { silent = true })
+      vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
+    end
+  },
+  {
+    "hrsh7th/nvim-cmp",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "hrsh7th/cmp-buffer",
+    },
+    config = function()
+      local cmp = require('cmp')
+      cmp.setup({
+        mapping = cmp.mapping.preset.insert({
+          ['<CR>'] = cmp.mapping.confirm({ select = true }),
+          ['<Tab>'] = cmp.mapping.select_next_item(),
+          ['<S-Tab>'] = cmp.mapping.select_prev_item(),
+        }),
+        sources = {
+          { name = 'nvim_lsp' },
+          { name = 'buffer' },
+        },
+      })
+    end
   }
 })
 
