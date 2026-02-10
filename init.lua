@@ -22,6 +22,16 @@ require("lazy").setup({
     end
   },
   {
+    "nvim-telescope/telescope.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      vim.keymap.set('n', '<C-t>', ':Telescope colorscheme<CR>', { silent = true })
+    end
+  },
+  "folke/tokyonight.nvim",
+  "catppuccin/nvim",
+  "rebelot/kanagawa.nvim",
+  {
     "nvim-tree/nvim-tree.lua",
     config = function()
       require("nvim-tree").setup({
@@ -37,6 +47,7 @@ require("lazy").setup({
           indent_markers = {
             enable = false,
           },
+          add_trailing = true,
         },
         view = {
           side = "left",
@@ -111,6 +122,81 @@ require("lazy").setup({
     end
   },
   {
+    "folke/noice.nvim",
+    dependencies = {
+      "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+    config = function()
+      require("noice").setup({
+        cmdline = {
+          enabled = true,
+          view = "cmdline_popup",
+          format = {
+            cmdline = { pattern = "^:", icon = ">", lang = "vim" },
+            search_down = { kind = "search", pattern = "^/", icon = "", lang = "regex" },
+            search_up = { kind = "search", pattern = "^%?", icon = "", lang = "regex" },
+            filter = { pattern = "^:%s*!", icon = "$", lang = "bash" },
+            lua = { pattern = "^:%s*lua%s+", icon = "☾", lang = "lua" },
+            help = { pattern = "^:%s*he?l?p?%s+", icon = "?" },
+          },
+        },
+        messages = {
+          enabled = true,
+          view = "notify",
+        },
+        popupmenu = {
+          enabled = true,
+          backend = "nui",
+        },
+        lsp = {
+          override = {
+            ["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+            ["vim.lsp.util.stylize_markdown"] = true,
+            ["cmp.entry.get_documentation"] = true,
+          },
+        },
+        presets = {
+          bottom_search = false,
+          command_palette = true,
+          long_message_to_split = true,
+        },
+      })
+    end
+  },
+  {
+    "goolord/alpha-nvim",
+    config = function()
+      local alpha = require("alpha")
+      local dashboard = require("alpha.themes.dashboard")
+      
+      dashboard.section.header.val = {
+        "                                                     ",
+        "                                                     ",
+        "                                                     ",
+        "          // Working close to the memory           ",
+        "                                                     ",
+        "                                                     ",
+        "                                                     ",
+      }
+      
+      dashboard.section.buttons.val = {}
+      dashboard.section.footer.val = ""
+      
+      dashboard.config.opts.noautocmd = true
+      dashboard.opts.layout[1].val = 8
+      
+      alpha.setup(dashboard.config)
+    end
+  },
+  {
+    "folke/todo-comments.nvim",
+    dependencies = { "nvim-lua/plenary.nvim" },
+    config = function()
+      require("todo-comments").setup()
+    end
+  },
+  {
     "neovim/nvim-lspconfig",
     config = function()
       vim.lsp.config.pyright = {
@@ -123,6 +209,17 @@ require("lazy").setup({
       
       vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { silent = true })
       vim.keymap.set('n', 'K', vim.lsp.buf.hover, { silent = true })
+      vim.keymap.set('n', '<C-k>', vim.lsp.buf.hover, { silent = true })
+      
+      -- Style hover popup with grey border
+      vim.cmd([[highlight FloatBorder guifg=#808080 guibg=NONE]])
+      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+        vim.lsp.handlers.hover, {
+          border = "rounded",
+          max_width = 80,
+          max_height = 20,
+        }
+      )
     end
   },
   {
@@ -143,6 +240,28 @@ require("lazy").setup({
           { name = 'nvim_lsp' },
           { name = 'buffer' },
         },
+      })
+    end
+  },
+  {
+    "akinsho/toggleterm.nvim",
+    config = function()
+      require("toggleterm").setup({
+        direction = 'float',
+        float_opts = {
+          border = 'curved',
+        },
+      })
+      vim.keymap.set('n', '<C-\\>', ':ToggleTerm<CR>', { silent = true })
+      vim.keymap.set('t', '<C-\\>', '<C-\\><C-n>:ToggleTerm<CR>', { silent = true })
+    end
+  },
+  {
+    "lukas-reineke/indent-blankline.nvim",
+    main = "ibl",
+    config = function()
+      require("ibl").setup({
+        scope = { enabled = true },
       })
     end
   }
